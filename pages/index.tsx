@@ -2,14 +2,19 @@ import Head from "next/head";
 import { Chart } from "@antv/g2";
 import { useState } from "react";
 import processContributions from "../lib/process";
+import { useRouter } from "next/dist/client/router";
 
 const classnames = (...props: string[]) => {
   return props.join(" ");
 };
 
 const Home = () => {
-  const [username, setUsername] = useState("");
-  const [timeWindow, setTimeWindow] = useState("2");
+  const router = useRouter();
+  const { routerUsername, routerTimeWindow } = router.query;
+  console.log({ routerUsername, routerTimeWindow });
+
+  const [username, setUsername] = useState(routerUsername ?? "");
+  const [timeWindow, setTimeWindow] = useState(routerTimeWindow ?? "2");
   const [chartInstance, setChartInstance] = useState<null | Chart>(null);
 
   const [currentIndex, setCurrentIndex] = useState(0);
