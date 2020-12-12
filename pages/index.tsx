@@ -55,12 +55,12 @@ const Home = () => {
       shared: true,
     });
 
-    chart.axis("index", {
-      title: {},
-    });
     chart.axis("delta", {
       title: {},
       grid: null,
+    });
+    chart.axis("index", {
+      title: {},
     });
 
     chart.line().position("date*index").color("#4FAAEB");
