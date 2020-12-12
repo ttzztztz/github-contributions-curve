@@ -15,6 +15,7 @@ const Home = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentDelta, setCurrentDelta] = useState(0.0);
   const [indexClassName, setIndexClassName] = useState("index-black");
+  const [currentRange, setCurrentRange] = useState("");
 
   const renderChart = async () => {
     chartInstance?.destroy();
@@ -81,6 +82,7 @@ const Home = () => {
           prevContribution.index
         ).toFixed(2)
       );
+      setCurrentRange(`${prevContribution.date}~${lastContribution.date}`);
 
       if (lastContribution.index === prevContribution.index) {
         setIndexClassName("index-black");
@@ -129,10 +131,16 @@ const Home = () => {
             {currentDelta}%
           </span>
         </div>
+        <div className="range">{currentRange}</div>
         <div id="chart-area"></div>
 
         <footer>
-          <a href="https://github.com/ttzztztz/github-contributions-curve">Github</a>
+          <a
+            href="https://github.com/ttzztztz/github-contributions-curve"
+            target="_blank"
+          >
+            Github
+          </a>
         </footer>
       </main>
     </>

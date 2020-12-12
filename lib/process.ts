@@ -1,17 +1,14 @@
 import { IContributions, IPreparedContributions } from "./types";
 
 const someYearAgo = (date: Date, deltaYear: number) => {
-  return new Date(
-    `${date.getFullYear() + deltaYear}-${(date.getMonth() + 1)
-      .toString()
-      .padStart(2, "0")}-${date.getDay().toString().padStart(2, "0")}`
-  );
+  const timestamp = date.getTime();
+  return new Date(timestamp + deltaYear * 366 * 24 * 60 * 60 * 1000);
 };
 
 const monoQueueShouldPop = (frontDateStr: string, currentDateStr: string) => {
   const lhs = new Date(frontDateStr).getTime(),
     rhs = new Date(currentDateStr).getTime();
-  return lhs < rhs - 1 * 365 * 24 * 60 * 60 * 1000;
+  return lhs < rhs - 1 * 366 * 24 * 60 * 60 * 1000;
 };
 
 const processContributions = (
