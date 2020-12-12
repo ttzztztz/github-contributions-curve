@@ -29,6 +29,21 @@ const fetchDataForYear = async (url: string, year: string) => {
     contribCount = +(tempContribText.replace(/,/g, ""), 10);
   }
 
+  const parseDay = (day: string) => {
+    const $day = $(day);
+    const date = $day
+      .attr("data-date")
+      .split("-")
+      .map((d) => parseInt(d, 10));
+    const value = {
+      date: $day.attr("data-date"),
+      count: parseInt($day.attr("data-count"), 10),
+    };
+    return { date, value };
+  };
+
+  const contributions = $days.get().map((day) => parseDay(day).value);
+
   return {
     year,
     total: contribCount ?? 0,
@@ -36,22 +51,7 @@ const fetchDataForYear = async (url: string, year: string) => {
       start: $($days.get(0)).attr("data-date"),
       end: $($days.get($days.length - 1)).attr("data-date"),
     },
-    contributions: (() => {
-      const parseDay = (day) => {
-        const $day = $(day);
-        const date = $day
-          .attr("data-date")
-          .split("-")
-          .map((d) => parseInt(d, 10));
-        const value = {
-          date: $day.attr("data-date"),
-          count: parseInt($day.attr("data-count"), 10),
-        };
-        return { date, value };
-      };
-
-      return $days.get().map((day) => parseDay(day).value);
-    })(),
+    contributions,
   };
 };
 
