@@ -25,3 +25,30 @@ img {
   max-width: 100%;
   display: block;
 }
+
+.current-index {
+  margin-right: 12px;
+  font-size: xx-large;
+  font-weight: bolder;
+}
+
+.index {
+  text-align: center;
+}
+
+.index-black {
+  color: black;
+}
+
+.index-red {
+  color: red;
+}
+
+.index-green {
+  color: green;
+}
+
+footer {
+  margin-top: 72px;
+  text-align: center;
+}
