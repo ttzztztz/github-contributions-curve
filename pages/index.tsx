@@ -103,6 +103,7 @@ const Home = () => {
       <main>
         <div className="control-container">
           <input
+            id="username"
             type="text"
             value={username}
             placeholder="Github username"
@@ -116,13 +117,16 @@ const Home = () => {
               setTimeWindow(e.target.value);
             }}
             value={timeWindow}
+            id="time-window"
           >
             <option value="1">1 Year</option>
             <option value="2">2 Years</option>
             <option value="3">3 Years</option>
             <option value="5">5 Years</option>
           </select>
-          <button onClick={() => renderChart()}>Generate</button>
+          <button id="generate" onClick={() => renderChart()}>
+            Generate
+          </button>
         </div>
         <div className={classnames("index", indexClassName)}>
           <span className="current-index">{currentIndex}pts</span>
