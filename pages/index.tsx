@@ -63,8 +63,8 @@ const Home = () => {
       title: {},
     });
 
-    chart.line().position("date*index").color("#4FAAEB");
     chart.line().position("date*delta").color("#9AD681");
+    chart.line().position("date*index").color("#4FAAEB");
     chart.render();
 
     setChartInstance(chart);
