@@ -63,7 +63,6 @@ const drawLine = (
     line: {
       length: 30,
     },
-    direction: 'downward'
   });
   view1.annotation().dataMarker({
     top: true,
@@ -102,8 +101,7 @@ const drawLine = (
     },
     line: {
       length: 30,
-    },
-    direction: 'downward'
+    }
   });
   view2.annotation().dataMarker({
     top: true,
