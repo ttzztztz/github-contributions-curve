@@ -3,6 +3,9 @@ module.exports = {
     if (!isServer) {
       config.node = {
         fs: "empty",
+        net: "empty",
+        tls: "empty",
+        child_process: "empty"
       };
     }
 
