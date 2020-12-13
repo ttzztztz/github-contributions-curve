@@ -25,6 +25,7 @@ const drawLine = (preparedContribtuions: IPreparedContributions[]) => {
     tickCount: 5,
     range: [0, 1],
   });
+  // if (!animation) chart.animate(false);
 
   const view1 = chart.createView({
     region: {
@@ -39,7 +40,7 @@ const drawLine = (preparedContribtuions: IPreparedContributions[]) => {
     },
     padding: [10, 10, 40, 60],
   });
-  view1.animate(false);
+  // if (!animation) view1.animate(false);
   view1.data(preparedContribtuions);
   view1.interaction("tooltip");
   view1.interaction("sibling-tooltip");
@@ -58,21 +59,27 @@ const drawLine = (preparedContribtuions: IPreparedContributions[]) => {
     },
     padding: [0, 10, 40, 60],
   });
+  // if (!animation) view1.animate(false);
   view2.interaction("tooltip");
   view2.interaction("sibling-tooltip");
   view2.data(preparedContribtuions);
   view2.line().position("date*delta").color("#9AD681");
   chart.render();
+
+  window.dispatchEvent(new Event("rendergraph"));
   return chart;
 };
 
 export const Home = ({
   initialUsername,
   initialTimeWindow,
+  initialData,
   preRender,
 }: IHomeProps) => {
   const [username, setUsername] = useState(preRender ? initialUsername : "");
-  const [timeWindow, setTimeWindow] = useState(preRender ? initialTimeWindow : "2");
+  const [timeWindow, setTimeWindow] = useState(
+    preRender ? initialTimeWindow : "2"
+  );
 
   const [chartInstance, setChartInstance] = useState<null | Chart>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -80,12 +87,7 @@ export const Home = ({
   const [indexClassName, setIndexClassName] = useState("index-black");
   const [currentRange, setCurrentRange] = useState("");
 
-  const renderChart = async () => {
-    chartInstance?.destroy();
-
-    const resp = await fetch(`/api/${username}`);
-    const { years, contributions } = await resp.json();
-
+  const renderChart = ({ years, contributions }: any) => {
     const preparedContribtuions = processContributions(
       contributions,
       +timeWindow
@@ -119,14 +121,26 @@ export const Home = ({
       }
     }
   };
+  const fetchChart = async () => {
+    chartInstance?.destroy();
+
+    const resp = await fetch(`/api/${username}`);
+    const { years, contributions } = await resp.json();
+
+    renderChart({ years, contributions });
+  };
 
   useEffect(() => {
     if (preRender) {
-      console.log("pre_render", { initialUsername, initialTimeWindow });
+      console.log("pre_render", {
+        initialUsername,
+        initialTimeWindow,
+        initialData,
+      });
       setUsername(initialUsername);
       setTimeWindow(initialTimeWindow);
 
-      renderChart();
+      renderChart(initialData);
     }
   }, []);
 
@@ -159,7 +173,7 @@ export const Home = ({
             <option value="3">3 Years</option>
             <option value="5">5 Years</option>
           </select>
-          <button id="generate" onClick={() => renderChart()}>
+          <button id="generate" onClick={() => fetchChart()}>
             Generate
           </button>
         </div>
