@@ -13,6 +13,11 @@ const drawLine = (
   preparedContribtuions: IPreparedContributions[],
   animation: boolean = true
 ) => {
+  const [firstContribution, lastContribution] = [
+    preparedContribtuions[0],
+    preparedContribtuions[preparedContribtuions.length - 1],
+  ];
+
   const chart = new Chart({
     container: "chart-area",
     autoFit: true,
@@ -41,13 +46,35 @@ const drawLine = (
         y: 0.7,
       },
     },
-    padding: [10, 10, 40, 60],
+    padding: [0, 60, 40, 60],
   });
+
   if (!animation) view1.animate(false);
   view1.data(preparedContribtuions);
   view1.interaction("tooltip");
   view1.interaction("sibling-tooltip");
   view1.area().position("date*index").color("#4FAAEB");
+  view1.annotation().dataMarker({
+    top: true,
+    position: [lastContribution.date, lastContribution.index],
+    text: {
+      content: `${lastContribution.index}`,
+    },
+    line: {
+      length: 30,
+    },
+    direction: 'downward'
+  });
+  view1.annotation().dataMarker({
+    top: true,
+    position: [firstContribution.date, firstContribution.index],
+    text: {
+      content: `${firstContribution.index}`,
+    },
+    line: {
+      length: 30,
+    },
+  });
 
   const view2 = chart.createView({
     region: {
@@ -60,13 +87,35 @@ const drawLine = (
         y: 1,
       },
     },
-    padding: [0, 10, 40, 60],
+    padding: [0, 60, 40, 60],
   });
   if (!animation) view1.animate(false);
   view2.interaction("tooltip");
   view2.interaction("sibling-tooltip");
   view2.data(preparedContribtuions);
   view2.line().position("date*delta").color("#9AD681");
+  view2.annotation().dataMarker({
+    top: true,
+    position: [lastContribution.date, lastContribution.delta],
+    text: {
+      content: `${lastContribution.delta}`,
+    },
+    line: {
+      length: 30,
+    },
+    direction: 'downward'
+  });
+  view2.annotation().dataMarker({
+    top: true,
+    position: [firstContribution.date, firstContribution.delta],
+    text: {
+      content: `${firstContribution.delta}`,
+    },
+    line: {
+      length: 30,
+    },
+  });
+
   chart.render();
 
   window.dispatchEvent(new Event("rendergraph"));
