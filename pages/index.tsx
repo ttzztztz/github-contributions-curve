@@ -38,39 +38,54 @@ const Home = () => {
       container: "chart-area",
       autoFit: true,
       height: 500,
+      defaultInteractions: [],
     });
-    chart.data(preparedContribtuions);
-
-    chart.scale({
-      date: {
-        alias: "Date",
-        type: "time",
-      },
-      index: {
-        alias: "Index",
-        sync: true,
-      },
-      delta: {
-        alias: "Delta",
-        sync: true,
-      },
-    });
-
     chart.tooltip({
       showCrosshairs: true,
-      shared: true,
+    });
+    chart.removeInteraction("tooltip");
+    chart.scale("date", {
+      sync: true,
+      tickCount: 5,
+      range: [0, 1],
     });
 
-    chart.axis("delta", {
-      title: {},
-      grid: null,
+    const view1 = chart.createView({
+      region: {
+        start: {
+          x: 0,
+          y: 0,
+        },
+        end: {
+          x: 1,
+          y: 0.7,
+        },
+      },
+      padding: [10, 10, 40, 60],
     });
-    chart.axis("index", {
-      title: {},
-    });
+    view1.animate(false);
+    view1.data(preparedContribtuions);
+    view1.interaction("tooltip");
+    view1.interaction("sibling-tooltip");
+    view1.area().position("date*index");
 
-    chart.line().position("date*delta").color("#9AD681");
-    chart.line().position("date*index").color("#4FAAEB");
+    const view2 = chart.createView({
+      region: {
+        start: {
+          x: 0,
+          y: 0.75,
+        },
+        end: {
+          x: 1,
+          y: 1,
+        },
+      },
+      padding: [0, 10, 40, 60],
+    });
+    view2.interaction("tooltip");
+    view2.interaction("sibling-tooltip");
+    view2.data(preparedContribtuions);
+    view2.line().position("date*delta");
     chart.render();
 
     setChartInstance(chart);
