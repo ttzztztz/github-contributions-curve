@@ -9,7 +9,10 @@ const classnames = (...props: string[]) => {
   return props.join(" ");
 };
 
-const drawLine = (preparedContribtuions: IPreparedContributions[]) => {
+const drawLine = (
+  preparedContribtuions: IPreparedContributions[],
+  animation: boolean = true
+) => {
   const chart = new Chart({
     container: "chart-area",
     autoFit: true,
@@ -25,7 +28,7 @@ const drawLine = (preparedContribtuions: IPreparedContributions[]) => {
     tickCount: 5,
     range: [0, 1],
   });
-  // if (!animation) chart.animate(false);
+  if (!animation) chart.animate(false);
 
   const view1 = chart.createView({
     region: {
@@ -40,7 +43,7 @@ const drawLine = (preparedContribtuions: IPreparedContributions[]) => {
     },
     padding: [10, 10, 40, 60],
   });
-  // if (!animation) view1.animate(false);
+  if (!animation) view1.animate(false);
   view1.data(preparedContribtuions);
   view1.interaction("tooltip");
   view1.interaction("sibling-tooltip");
@@ -59,7 +62,7 @@ const drawLine = (preparedContribtuions: IPreparedContributions[]) => {
     },
     padding: [0, 10, 40, 60],
   });
-  // if (!animation) view1.animate(false);
+  if (!animation) view1.animate(false);
   view2.interaction("tooltip");
   view2.interaction("sibling-tooltip");
   view2.data(preparedContribtuions);
@@ -78,7 +81,7 @@ export const Home = ({
 }: IHomeProps) => {
   const [username, setUsername] = useState(preRender ? initialUsername : "");
   const [timeWindow, setTimeWindow] = useState(
-    preRender ? initialTimeWindow : "2"
+    preRender ? initialTimeWindow : "3m"
   );
 
   const [chartInstance, setChartInstance] = useState<null | Chart>(null);
@@ -87,14 +90,17 @@ export const Home = ({
   const [indexClassName, setIndexClassName] = useState("index-black");
   const [currentRange, setCurrentRange] = useState("");
 
-  const renderChart = ({ years, contributions }: any) => {
+  const renderChart = (
+    { years, contributions }: any,
+    animation: boolean = true
+  ) => {
     const preparedContribtuions = processContributions(
       contributions,
-      +timeWindow
+      timeWindow
     );
     console.log({ years, contributions, preparedContribtuions });
 
-    const chart = drawLine(preparedContribtuions);
+    const chart = drawLine(preparedContribtuions, animation);
     setChartInstance(chart);
     const len = preparedContribtuions.length;
     if (len >= 2) {
@@ -140,7 +146,7 @@ export const Home = ({
       setUsername(initialUsername);
       setTimeWindow(initialTimeWindow);
 
-      renderChart(initialData);
+      renderChart(initialData, false);
     }
   }, []);
 
@@ -150,33 +156,44 @@ export const Home = ({
         <title>Github Contributions Chart</title>
       </Head>
       <main>
-        <div className="control-container">
-          <input
-            id="username"
-            type="text"
-            value={username}
-            placeholder="Github username"
-            onChange={(e) => {
-              setUsername(e.target.value);
-            }}
-          />
-          <select
-            name="time-window"
-            onChange={(e) => {
-              setTimeWindow(e.target.value);
-            }}
-            value={timeWindow}
-            id="time-window"
-          >
-            <option value="1">1 Year</option>
-            <option value="2">2 Years</option>
-            <option value="3">3 Years</option>
-            <option value="5">5 Years</option>
-          </select>
-          <button id="generate" onClick={() => fetchChart()}>
-            Generate
-          </button>
-        </div>
+        {!preRender && (
+          <div className="control-container">
+            <input
+              id="username"
+              type="text"
+              value={username}
+              placeholder="Github username"
+              onChange={(e) => {
+                setUsername(e.target.value);
+              }}
+            />
+            <select
+              name="time-window"
+              onChange={(e) => {
+                setTimeWindow(e.target.value);
+              }}
+              value={timeWindow}
+              id="time-window"
+            >
+              <option value="1m">1 Month</option>
+              <option value="2m">2 Months</option>
+              <option value="3m">3 Months</option>
+              <option value="6m">6 Months</option>
+              <option value="1">1 Year</option>
+              <option value="2">2 Years</option>
+              <option value="3">3 Years</option>
+              <option value="5">5 Years</option>
+            </select>
+            <button id="generate" onClick={() => fetchChart()}>
+              Generate
+            </button>
+            <button
+              onClick={() => window.open(`/image/${timeWindow}/${username}`)}
+            >
+              Link
+            </button>
+          </div>
+        )}
         <div className={classnames("index", indexClassName)}>
           <span className="current-index">{currentIndex}pts</span>
           <span className="current-delta">

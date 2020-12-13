@@ -1,8 +1,8 @@
 import { IContributions, IPreparedContributions } from "./types";
 
-const someYearAgo = (date: Date, deltaYear: number) => {
+const someDaysAgo = (date: Date, deltaDay: number) => {
   const timestamp = date.getTime();
-  return new Date(timestamp + deltaYear * 366 * 24 * 60 * 60 * 1000);
+  return new Date(timestamp + deltaDay * 24 * 60 * 60 * 1000);
 };
 
 const monoQueueShouldPop = (frontDateStr: string, currentDateStr: string) => {
@@ -13,18 +13,23 @@ const monoQueueShouldPop = (frontDateStr: string, currentDateStr: string) => {
 
 const processContributions = (
   contributions: IContributions[],
-  timeWindow: number
+  timeWindowRaw: string
 ): IPreparedContributions[] => {
   contributions.sort((lhs, rhs) => {
     return new Date(lhs.date).getTime() - new Date(rhs.date).getTime();
   });
 
+  const isMonth = timeWindowRaw[timeWindowRaw.length - 1] === "m";
+  if (isMonth) {
+    timeWindowRaw = timeWindowRaw.substr(0, timeWindowRaw.length - 1);
+  }
+  const timeWindow = isMonth ? 32 * +timeWindowRaw : 366 * +timeWindowRaw;
+
   const monoQueue: IContributions[] = [];
   let currentVal = 0;
   const ans: IPreparedContributions[] = [];
 
-  const someYearsAgo = someYearAgo(new Date(), -timeWindow).getTime();
-
+  const someDays = someDaysAgo(new Date(), -timeWindow).getTime();
   const now = new Date().getTime();
   contributions.forEach(({ date, count }) => {
     while (
@@ -38,7 +43,7 @@ const processContributions = (
     currentVal += count;
 
     const timestamp = new Date(date).getTime();
-    if (someYearsAgo <= timestamp && timestamp <= now) {
+    if (someDays <= timestamp && timestamp <= now) {
       ans.push({
         date,
         delta: count,
