@@ -67,7 +67,7 @@ const fetchGithubUserContributions = async (
     if (isMonth) {
       timeWindowRaw = timeWindowRaw.substr(0, timeWindowRaw.length - 1);
     }
-    const timeWindow = isMonth ? 32 * +timeWindowRaw : 366 * +timeWindowRaw;
+    const timeWindow = Math.max(366 * 1, isMonth ? 32 * +timeWindowRaw : 366 * +timeWindowRaw);
     const someDays = someDaysAgo(new Date(), -(timeWindow * 2));
     const leastYear = someDays.getFullYear();
 
