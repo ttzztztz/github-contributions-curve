@@ -1,5 +1,6 @@
 import cheerio from "cheerio";
 import fetch from "node-fetch";
+import { someDaysAgo } from "./date";
 
 const fetchYears = async (username: string) => {
   const data = await fetch(`https://github.com/${username}`);
@@ -55,25 +56,40 @@ const fetchDataForYear = async (url: string, year: string) => {
   };
 };
 
-const fetchGithubUserContributions = async (username: string) => {
-  const years = await fetchYears(username);
-  return Promise.all(
+const fetchGithubUserContributions = async (
+  username: string,
+  timeWindowRaw: string | undefined
+) => {
+  let years = await fetchYears(username);
+
+  if (timeWindowRaw) {
+    const isMonth = timeWindowRaw.endsWith("m");
+    if (isMonth) {
+      timeWindowRaw = timeWindowRaw.substr(0, timeWindowRaw.length - 1);
+    }
+    const timeWindow = isMonth ? 32 * +timeWindowRaw : 366 * +timeWindowRaw;
+    const someDays = someDaysAgo(new Date(), -(timeWindow * 2));
+    const leastYear = someDays.getFullYear();
+
+    years = years.filter(({ text }) => leastYear <= +text);
+  }
+  const resp = await Promise.all(
     years.map((year) => fetchDataForYear(year.href, year.text))
-  ).then((resp) => {
-    return {
-      years: resp.map((year) => {
-        const { contributions, range, ...rest } = year;
-        return rest;
+  );
+
+  return {
+    years: resp.map((year) => {
+      const { contributions, range, ...rest } = year;
+      return rest;
+    }),
+    contributions: resp
+      .reduce((list, curr) => [...list, ...curr.contributions], [])
+      .sort((a, b) => {
+        if (a.date < b.date) return 1;
+        else if (a.date > b.date) return -1;
+        return 0;
       }),
-      contributions: resp
-        .reduce((list, curr) => [...list, ...curr.contributions], [])
-        .sort((a, b) => {
-          if (a.date < b.date) return 1;
-          else if (a.date > b.date) return -1;
-          return 0;
-        }),
-    };
-  });
+  };
 };
 
 export default fetchGithubUserContributions;

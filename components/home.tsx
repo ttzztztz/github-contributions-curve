@@ -174,10 +174,10 @@ export const Home = ({
       }
     }
   };
-  const fetchChart = async () => {
+  const fetchChart = async (timeWindow: string) => {
     chartInstance?.destroy();
 
-    const resp = await fetch(`/api/${username}`);
+    const resp = await fetch(`/api/${username}?window=${timeWindow}`);
     const { years, contributions } = await resp.json();
 
     renderChart({ years, contributions });
@@ -231,7 +231,7 @@ export const Home = ({
               <option value="3">3 Years</option>
               <option value="5">5 Years</option>
             </select>
-            <button id="generate" onClick={() => fetchChart()}>
+            <button id="generate" onClick={() => fetchChart(timeWindow)}>
               Generate
             </button>
             <button
