@@ -46,7 +46,7 @@ const drawLine = (
         y: 0.7,
       },
     },
-    padding: [0, 60, 40, 60],
+    padding: [20, 60, 40, 60],
   });
 
   if (!animation) view1.animate(false);
