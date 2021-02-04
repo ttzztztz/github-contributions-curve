@@ -4,7 +4,8 @@ import { someDaysAgo } from "./date";
 
 const fetchYears = async (username: string) => {
   const data = await fetch(`https://github.com/${username}`);
-  const $ = cheerio.load(await data.text());
+  const text_html = await data.text();
+  const $ = cheerio.load(text_html);
   return $(".js-year-link")
     .get()
     .map((a) => {
@@ -18,8 +19,9 @@ const fetchYears = async (username: string) => {
 
 const fetchDataForYear = async (url: string, year: string) => {
   const data = await fetch(`https://github.com${url}`);
-  const $ = cheerio.load(await data.text());
-  const $days = $("rect.day");
+  const text_html = await data.text();
+  const $ = cheerio.load(text_html);
+  const $days = $(".js-calendar-graph-svg rect");
   const contribText = $(".js-yearly-contributions h2")
     .text()
     .trim()
@@ -27,7 +29,7 @@ const fetchDataForYear = async (url: string, year: string) => {
   let contribCount = 0;
   if (contribText) {
     const [tempContribText] = contribText;
-    contribCount = +(tempContribText.replace(/,/g, ""), 10);
+    contribCount = +tempContribText.replace(/,/g, "");
   }
 
   const parseDay = (day: string) => {
@@ -35,11 +37,12 @@ const fetchDataForYear = async (url: string, year: string) => {
     const date = $day
       .attr("data-date")
       .split("-")
-      .map((d) => parseInt(d, 10));
+      .map((d) => +d);
     const value = {
       date: $day.attr("data-date"),
-      count: parseInt($day.attr("data-count"), 10),
+      count: +$day.attr("data-count"),
     };
+
     return { date, value };
   };
 
@@ -67,7 +70,10 @@ const fetchGithubUserContributions = async (
     if (isMonth) {
       timeWindowRaw = timeWindowRaw.substr(0, timeWindowRaw.length - 1);
     }
-    const timeWindow = Math.max(366 * 1, isMonth ? 32 * +timeWindowRaw : 366 * +timeWindowRaw);
+    const timeWindow = Math.max(
+      366 * 1,
+      isMonth ? 32 * +timeWindowRaw : 366 * +timeWindowRaw
+    );
     const someDays = someDaysAgo(new Date(), -(timeWindow * 2));
     const leastYear = someDays.getFullYear();
 
