@@ -1,4 +1,4 @@
-import { GetServerSideProps, GetStaticProps } from "next";
+import { GetServerSideProps } from "next";
 import { Home } from "../../../components/home";
 import ENDPOINT from "../../../lib/endpoint";
 import { IHomeProps } from "../../../models/home";

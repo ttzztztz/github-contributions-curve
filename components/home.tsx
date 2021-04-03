@@ -2,7 +2,7 @@ import Head from "next/head";
 import { Chart } from "@antv/g2";
 import { useEffect, useState } from "react";
 import processContributions from "../lib/process";
-import { IPreparedContributions } from "../lib/types";
+import { IAnalysisData, IPreparedContributions } from "../lib/types";
 import { IHomeProps } from "../models/home";
 
 const classnames = (...props: string[]) => {
@@ -101,7 +101,7 @@ const drawLine = (
     },
     line: {
       length: 30,
-    }
+    },
   });
   view2.annotation().dataMarker({
     top: true,
@@ -131,17 +131,18 @@ export const Home = ({
     preRender ? initialTimeWindow : "3m"
   );
 
-  const [chartInstance, setChartInstance] = useState<null | Chart>(null);
+  const [chartInstance, setChartInstance] = useState<Chart | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentDelta, setCurrentDelta] = useState(0);
   const [indexClassName, setIndexClassName] = useState("index-black");
   const [currentRange, setCurrentRange] = useState("");
+  const [analysis, setAnalysis] = useState<IAnalysisData | null>(null);
 
   const renderChart = (
     { years, contributions }: any,
     animation: boolean = true
   ) => {
-    const preparedContribtuions = processContributions(
+    const { preparedContribtuions, analysisData } = processContributions(
       contributions,
       timeWindow
     );
@@ -172,6 +173,8 @@ export const Home = ({
         // lastContribution.index < prevContribution.index
         setIndexClassName("index-green");
       }
+
+      setAnalysis(analysisData);
     }
   };
   const fetchChart = async (timeWindow: string) => {
@@ -250,6 +253,15 @@ export const Home = ({
         </div>
         <div className="range">{currentRange}</div>
         <div id="chart-area"></div>
+        {analysis && (
+          <div className="analysis">
+            {Object.entries(analysis).map(([key, value]) => (
+              <div key={key} className="analysis-item">
+                {key}: {value.toFixed(2)}
+              </div>
+            ))}
+          </div>
+        )}
 
         <footer>
           <a
