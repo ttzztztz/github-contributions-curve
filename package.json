@@ -8,8 +8,8 @@
     "start": "npx next telemetry disable && next start"
   },
   "dependencies": {
-    "@antv/g2": "^4.1.13",
-    "cheerio": "^1.0.0-rc.5",
+    "@antv/g2": "^4.1.15",
+    "cheerio": "^1.0.0-rc.6",
     "next": "^10.1.3",
     "node-fetch": "^2.6.1",
     "react": "17.0.2",
@@ -17,9 +17,9 @@
   },
   "devDependencies": {
     "@types/cheerio": "^0.22.28",
-    "@types/node": "^14.14.37",
-    "@types/node-fetch": "^2.5.9",
+    "@types/node": "^14.14.41",
+    "@types/node-fetch": "^2.5.10",
     "@types/react": "^17.0.3",
-    "typescript": "^4.2.3"
+    "typescript": "^4.2.4"
   }
 }
