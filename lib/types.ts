@@ -8,3 +8,16 @@ export interface IPreparedContributions {
   delta: number;
   index: number;
 }
+
+export interface IAnalysisData {
+  min: number;
+  max: number;
+  stdDeviation: number;
+  average: number;
+  median: number;
+}
+
+export interface IProcessContributionsReturnObject {
+  preparedContribtuions: IPreparedContributions[];
+  analysisData: IAnalysisData;
+}
