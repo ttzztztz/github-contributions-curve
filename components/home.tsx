@@ -101,7 +101,7 @@ const drawLine = (
     },
     line: {
       length: 30,
-    }
+    },
   });
   view2.annotation().dataMarker({
     top: true,
@@ -157,10 +157,8 @@ export const Home = ({
       ];
       setCurrentIndex(lastContribution.index);
       setCurrentDelta(
-        +(
-          (100.0 * (lastContribution.index - prevContribution.index)) /
+        (100.0 * (lastContribution.index - prevContribution.index)) /
           prevContribution.index
-        ).toFixed(2)
       );
       setCurrentRange(`${prevContribution.date}~${lastContribution.date}`);
 
@@ -245,7 +243,7 @@ export const Home = ({
           <span className="current-index">{currentIndex}pts</span>
           <span className="current-delta">
             {currentDelta > 0 ? "+" : ""}
-            {currentDelta}%
+            {currentDelta.toFixed(2)}%
           </span>
         </div>
         <div className="range">{currentRange}</div>
